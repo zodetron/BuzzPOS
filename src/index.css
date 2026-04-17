@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #f59e0b; /* Amber 500 */
+  --color-primary-dark: #b45309; /* Amber 700 */
+  --color-primary-light: #fbbf24; /* Amber 400 */
+  
+  --color-surface-950: #0a0a0a;
+  --color-surface-900: #121212;
+  --color-surface-800: #1a1a1a;
+  --color-surface-700: #2a2a2a;
+  --color-surface-600: #3a3a3a;
+}
+
+:root {
+  --glass-bg: rgba(20, 20, 20, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+body {
+  @apply bg-surface-950 text-gray-100 antialiased;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  @apply rounded-2xl transition-all duration-300;
+}
+
+.glass-card:hover {
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.btn-primary {
+  @apply bg-amber-600 hover:bg-amber-500 text-white font-bold py-2.5 px-6 rounded-xl 
+         transition-all duration-200 transform active:scale-95 shadow-lg shadow-amber-900/20
+         flex items-center justify-center gap-2;
+}
+
+.btn-secondary {
+  @apply bg-surface-700 hover:bg-surface-600 text-white font-semibold py-2.5 px-6 rounded-xl 
+         transition-all duration-200 flex items-center justify-center gap-2;
+}
+
+.input-field {
+  @apply bg-surface-800 border border-surface-700 text-white rounded-xl px-4 py-3 
+         outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50
+         transition-all duration-200 placeholder-gray-500;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-surface-700 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-surface-600;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Global utility for glass effect if needed elsewhere */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
