@@ -118,7 +118,6 @@ export default function Admin() {
     { label: `Revenue (${rangeLabel})`, value: `₹${(Number(dashboard?.totalRevenue) || 0).toFixed(0)}`, icon: DollarSign, color: 'text-green-500', bg: 'bg-green-500/10' },
     { label: `Profit (${rangeLabel})`, value: `₹${(Number(dashboard?.totalProfit) || 0).toFixed(0)}`, icon: TrendingUp, color: 'text-amber-500', bg: 'bg-amber-500/10' },
     { label: `Orders (${rangeLabel})`, value: dashboard?.totalOrders || 0, icon: ShoppingCart, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: `Items Sold (${rangeLabel})`, value: dashboard?.itemsSold || 0, icon: Package, color: 'text-purple-500', bg: 'bg-purple-500/10' },
   ]
 
   return (
@@ -322,24 +321,7 @@ export default function Admin() {
                     </div>
                   </div>
 
-                  {/* Quick Summary Card */}
-                  <div className="glass-card p-6 border border-white/5 bg-surface-900/40">
-                    <h3 className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-4">Quick Stats</h3>
-                    <div className="space-y-4">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Inventory Items</span>
-                        <span className="text-white font-bold">{items.length}</span>
-                      </div>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Database Engine</span>
-                        <span className="text-green-500 font-bold">MongoDB Atlas</span>
-                      </div>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Server Status</span>
-                        <span className="text-green-500 font-bold">Operational</span>
-                      </div>
-                    </div>
-                  </div>
+
                 </div>
               </div>
 
