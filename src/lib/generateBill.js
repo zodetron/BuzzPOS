@@ -137,6 +137,24 @@ export function generateBill(cartItems, total, dailyOrderNo = null) {
   doc.text('Please visit again', CENTER, y, { align: 'center' })
   y += 6
 
-  // ── Save ──────────────────────────────────────────────────────────────────
-  doc.save(`Mehfil_Bill_${billNo}.pdf`)
+  // ── Output ────────────────────────────────────────────────────────────────
+  // Use blob URL + window.open() so it works in both desktop browsers (new tab)
+  // and Android WebView (inline PDF viewer).
+  // Falls back to data URI if blob URL fails, then to direct download.
+  try {
+    const blob = doc.output('blob')
+    const url = URL.createObjectURL(blob)
+    const win = window.open(url, '_blank')
+    if (!win) throw new Error('window.open blocked')
+    setTimeout(() => URL.revokeObjectURL(url), 10000)
+  } catch {
+    // Fallback for WebViews that block window.open — open as data URI
+    try {
+      const dataUri = doc.output('datauristring')
+      window.open(dataUri, '_blank')
+    } catch {
+      // Last resort: trigger download
+      doc.save(`Mehfil_Bill_${billNo}.pdf`)
+    }
+  }
 }
