@@ -3,9 +3,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
-    { "source": "/api/items",     "destination": "/api/items" },
-    { "source": "/api/order",     "destination": "/api/order" },
-    { "source": "/api/dashboard", "destination": "/api/dashboard" },
-    { "source": "/(.*)",          "destination": "/index.html" }
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/((?!api|assets|favicon).*)", "destination": "/index.html" }
   ]
 }

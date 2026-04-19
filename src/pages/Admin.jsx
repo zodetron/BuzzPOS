@@ -12,7 +12,7 @@ import {
 import { api } from '../lib/api'
 import { getUser, logout } from '../lib/auth'
 
-const EMPTY_FORM = { name: '', stock_ml: '', cost_price: '', selling_price: '', ml_per_unit: '', category: 'alcohol' }
+const EMPTY_FORM = { name: '', units: '', cost_price: '', selling_price: '', ml_per_unit: '', category: 'alcohol' }
 const EMPTY_DASH = { totalRevenue: 0, totalProfit: 0, totalOrders: 0, itemsSold: 0, lowStockItems: [], salesChart: [] }
 
 export default function Admin() {
@@ -65,7 +65,7 @@ export default function Admin() {
     setEditId(item._id)
     setForm({
       name: item.name,
-      stock_ml: item.stock_ml,
+      units: Math.floor(item.stock_ml / item.ml_per_unit), // back-derive units from stored ml
       cost_price: item.cost_price,
       selling_price: item.selling_price,
       ml_per_unit: item.ml_per_unit,
@@ -85,12 +85,17 @@ export default function Admin() {
     setFormError('')
     setSaving(true)
     try {
+      const ml_per_unit = Number(form.ml_per_unit)
+      const units = Number(form.units)
+      if (!units || units <= 0) return setFormError('Units must be greater than 0')
+      if (!ml_per_unit || ml_per_unit <= 0) return setFormError('ml per unit must be greater than 0')
+
       const payload = {
         name: form.name,
-        stock_ml: Number(form.stock_ml),
+        stock_ml: units * ml_per_unit,   // convert units → ml for storage
         cost_price: Number(form.cost_price),
         selling_price: Number(form.selling_price),
-        ml_per_unit: Number(form.ml_per_unit),
+        ml_per_unit,
         category: form.category,
       }
       if (editId) {
@@ -129,7 +134,7 @@ export default function Admin() {
             <Beer className="w-5 h-5 md:w-6 md:h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-white font-black text-base md:text-xl tracking-tight leading-none">ADMIN DASHBOARD</h1>
+            <h1 className="text-white font-black text-base md:text-xl tracking-tight leading-none">MEHFIL ADMIN</h1>
             <div className="flex items-center gap-2 mt-0.5">
               <div className={`w-1.5 h-1.5 rounded-full ${dbStatus === 'ok' ? 'bg-green-500' : 'bg-red-500'}`} />
               <p className="text-gray-500 text-[9px] md:text-[10px] font-bold uppercase tracking-widest">{dbStatus === 'ok' ? 'Cloud Connected' : 'Connection Error'}</p>
@@ -339,7 +344,7 @@ export default function Admin() {
                     <thead className="text-[10px] font-black uppercase tracking-widest text-gray-500 bg-white/2">
                       <tr>
                         <th className="px-6 py-4">Item</th>
-                        <th className="px-6 py-4">Volume</th>
+                        <th className="px-6 py-4">Units Left</th>
                         <th className="px-6 py-4">Stock</th>
                         <th className="px-6 py-4">Price / Unit</th>
                         <th className="px-6 py-4 text-right">Profit Margin</th>
@@ -356,7 +361,7 @@ export default function Admin() {
                                 <span className="text-[10px] text-gray-500 uppercase">{item.category}</span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-gray-400 font-mono">{item.stock_ml}ml</td>
+                            <td className="px-6 py-4 text-gray-400 font-mono">{item.units_left} × {item.ml_per_unit}ml</td>
                             <td className="px-6 py-4">
                               <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${item.low_stock ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}`}>
                                 {item.units_left} UNITS
@@ -378,7 +383,7 @@ export default function Admin() {
                       <div key={item._id} className="p-4 flex items-center justify-between gap-3">
                         <div className="min-w-0">
                           <p className="text-white font-bold text-sm truncate">{item.name}</p>
-                          <p className="text-gray-500 text-[10px] uppercase mt-0.5">{item.category} · {item.stock_ml}ml</p>
+                          <p className="text-gray-500 text-[10px] uppercase mt-0.5">{item.category} · {item.units_left} units</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${item.low_stock ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}`}>
@@ -441,12 +446,14 @@ export default function Admin() {
                         </select>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-1">Vol (ml)</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-1">Units in Stock</label>
                         <input
                           type="number"
-                          value={form.stock_ml}
-                          onChange={e => setForm(f => ({ ...f, stock_ml: e.target.value }))}
+                          min="1"
+                          value={form.units}
+                          onChange={e => setForm(f => ({ ...f, units: e.target.value }))}
                           className="input-field w-full"
+                          placeholder="e.g. 10"
                           required
                         />
                       </div>
@@ -476,14 +483,21 @@ export default function Admin() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-1">ml per Unit (Serving Size)</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-1">ml per Unit</label>
                       <input
                         type="number"
+                        min="1"
                         value={form.ml_per_unit}
                         onChange={e => setForm(f => ({ ...f, ml_per_unit: e.target.value }))}
                         className="input-field w-full"
+                        placeholder="e.g. 750"
                         required
                       />
+                      {form.units && form.ml_per_unit && (
+                        <p className="text-[10px] text-amber-500/70 font-bold ml-1">
+                          = {(Number(form.units) * Number(form.ml_per_unit)).toLocaleString()}ml total stored
+                        </p>
+                      )}
                     </div>
 
                     {formError && (
@@ -528,7 +542,7 @@ export default function Admin() {
                         <div className="flex items-center gap-2 md:gap-4 mt-0.5 text-[10px] font-black uppercase tracking-widest text-gray-500 flex-wrap">
                           <span>{item.category}</span>
                           <span className="hidden sm:inline">·</span>
-                          <span className="hidden sm:inline">{item.stock_ml}ml</span>
+                          <span className="hidden sm:inline">{item.units_left} × {item.ml_per_unit}ml</span>
                           <span className="text-amber-500">₹{item.selling_price}/unit</span>
                         </div>
                       </div>

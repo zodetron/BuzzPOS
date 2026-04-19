@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Trash2, Plus, Minus, ShoppingCart, Receipt, XCircle } from 'lucide-react'
 
 export default function Cart({ cart, onIncrease, onDecrease, onRemove, onCheckout, onClear }) {
-  const total = cart.reduce((s, i) => s + (i.cartQuantity * i.ratio * i.selling_price), 0)
+  const total = Math.ceil(cart.reduce((s, i) => s + (i.cartQuantity * i.ratio * i.selling_price), 0))
 
   // Calculate ml already in cart per item _id
   function mlInCartForItem(itemId) {
@@ -88,7 +88,7 @@ export default function Cart({ cart, onIncrease, onDecrease, onRemove, onCheckou
       <div className="pt-6 mt-4 border-t border-white/5 space-y-4">
         <div className="flex justify-between items-end">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">Order Total</span>
-          <span className="text-white font-black text-2xl tracking-tighter">₹{total.toFixed(2)}</span>
+          <span className="text-white font-black text-2xl tracking-tighter">₹{total}</span>
         </div>
         
         <div className="flex flex-col gap-2">

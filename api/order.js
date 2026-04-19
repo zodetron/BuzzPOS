@@ -56,7 +56,13 @@ export default async function handler(req, res) {
     }
 
     const order = await Order.create({ items: orderItems, total })
-    return res.status(201).json(order)
+
+    // Count how many orders exist today (including this one) for the bill number
+    const todayStart = new Date()
+    todayStart.setHours(0, 0, 0, 0)
+    const todayCount = await Order.countDocuments({ createdAt: { $gte: todayStart } })
+
+    return res.status(201).json({ ...order.toObject(), dailyOrderNo: todayCount })
 
   } catch (err) {
     console.error('[/api/order]', err)

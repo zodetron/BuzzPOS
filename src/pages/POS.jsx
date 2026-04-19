@@ -91,9 +91,10 @@ export default function POS() {
         item_id: i._id, 
         quantity_ml: i.cartQuantity * i.ml_per_serve
       }))
-      await api.placeOrder(orderItems)
-      const total = cart.reduce((s, i) => s + (i.cartQuantity * i.ratio * i.selling_price), 0)
-      generateBill(cart, total)
+      const orderRes = await api.placeOrder(orderItems)
+      const total = Math.ceil(cart.reduce((s, i) => s + (i.cartQuantity * i.ratio * i.selling_price), 0))
+      const dailyOrderNo = orderRes?.data?.dailyOrderNo || null
+      generateBill(cart, total, dailyOrderNo)
       setCart([])
       setShowBill(false)
       setShowCart(false)
@@ -105,7 +106,7 @@ export default function POS() {
     }
   }
 
-  const total = cart.reduce((s, i) => s + (i.cartQuantity * i.ratio * i.selling_price), 0)
+  const total = Math.ceil(cart.reduce((s, i) => s + (i.cartQuantity * i.ratio * i.selling_price), 0))
   const cartCount = cart.reduce((s, i) => s + i.cartQuantity, 0)
   const categories = ['all', ...new Set(items.map(i => i.category))]
   
@@ -125,7 +126,7 @@ export default function POS() {
               <Beer className="w-5 h-5 md:w-6 md:h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-white font-black text-lg md:text-xl tracking-tight leading-none">BAR POS</h1>
+              <h1 className="text-white font-black text-lg md:text-xl tracking-tight leading-none">MEHFIL</h1>
               <p className="text-gray-500 text-[9px] md:text-[10px] font-bold uppercase tracking-widest mt-0.5">Terminal Active</p>
             </div>
           </div>
@@ -213,7 +214,14 @@ export default function POS() {
                   className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4"
                 >
                   {filtered.map(item => (
-                    <ItemCard key={item._id} item={item} onAdd={addToCart} />
+                    <ItemCard
+                      key={item._id}
+                      item={item}
+                      onAdd={addToCart}
+                      cartQty={cart
+                        .filter(c => c._id === item._id)
+                        .reduce((s, c) => s + c.cartQuantity, 0)}
+                    />
                   ))}
                 </motion.div>
               ) : (
@@ -281,7 +289,7 @@ export default function POS() {
             {cartCount > 0 ? (
               <>
                 <span>{cartCount} item{cartCount > 1 ? 's' : ''}</span>
-                <span className="bg-black/20 rounded-lg px-2 py-0.5 text-sm font-black">₹{total.toFixed(0)}</span>
+                <span className="bg-black/20 rounded-lg px-2 py-0.5 text-sm font-black">₹{total}</span>
               </>
             ) : (
               <span>Cart</span>

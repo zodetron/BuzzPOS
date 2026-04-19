@@ -50,7 +50,7 @@ export default function Login() {
           >
             <Beer className="w-10 h-10 text-amber-500" />
           </motion.div>
-          <h1 className="text-white text-3xl font-black tracking-tight mb-2">BAR <span className="text-amber-500">POS</span></h1>
+          <h1 className="text-white text-3xl font-black tracking-tight mb-2">MEHFIL <span className="text-amber-500">POS</span></h1>
           <p className="text-gray-400 font-medium">Elevating Service Excellence</p>
         </div>
 
@@ -126,11 +126,11 @@ export default function Login() {
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-white/5 rounded-xl p-3 border border-white/5">
                 <p className="text-amber-500 font-bold text-xs mb-1">ADMINISTRATOR</p>
-                <p className="text-gray-400 text-[10px] truncate">mehfil_admin / ...2025</p>
+                <p className="text-gray-400 text-[10px] truncate">mehfil admin</p>
               </div>
               <div className="bg-white/5 rounded-xl p-3 border border-white/5">
                 <p className="text-amber-500 font-bold text-xs mb-1">STAFF CREW</p>
-                <p className="text-gray-400 text-[10px] truncate">mehfil_staff / ...2025</p>
+                <p className="text-gray-400 text-[10px] truncate">mehfil staff</p>
               </div>
             </div>
           </div>

@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, AlertTriangle, ZapOff, X } from 'lucide-react'
 
-export default function ItemCard({ item, onAdd }) {
+export default function ItemCard({ item, onAdd, cartQty = 0 }) {
   const [showVariants, setShowVariants] = useState(false)
   const isOut = item.out_of_stock
   const isLow = item.low_stock && !isOut
-  
+  const inCart = cartQty > 0
+
   const hasVariants = item.category === 'alcohol' || item.category === 'wine'
 
   const handleMainClick = () => {
@@ -34,11 +35,19 @@ export default function ItemCard({ item, onAdd }) {
         transition-all duration-300 select-none overflow-hidden
         ${isOut
           ? 'bg-surface-800/50 grayscale border-surface-700/50 cursor-not-allowed border'
-          : 'bg-gradient-to-br from-surface-800 to-surface-900 border border-white/5 shadow-xl'
+          : inCart
+            ? 'bg-gradient-to-br from-amber-900/40 to-surface-900 border-2 border-amber-500/70 shadow-xl shadow-amber-900/30'
+            : 'bg-gradient-to-br from-surface-800 to-surface-900 border border-white/5 shadow-xl'
         }
         ${!showVariants && !isOut ? 'hover:border-amber-500/50 cursor-pointer' : ''}
       `}
     >
+      {/* In-cart quantity badge */}
+      {inCart && !showVariants && (
+        <div className="absolute top-2 left-2 z-10 bg-amber-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded-md pointer-events-none">
+          ×{cartQty} in order
+        </div>
+      )}
       <AnimatePresence mode="wait">
         {!showVariants ? (
           <motion.div 
@@ -69,7 +78,7 @@ export default function ItemCard({ item, onAdd }) {
             </div>
 
             {/* Category Indicator */}
-            <div className="absolute bottom-0 left-0 w-full h-1 bg-amber-500/20 group-hover:bg-amber-500 transition-all" />
+            <div className={`absolute bottom-0 left-0 w-full h-1 transition-all ${inCart ? 'bg-amber-500' : 'bg-amber-500/20 group-hover:bg-amber-500'}`} />
 
             <div className="flex flex-col items-center gap-1 pointer-events-none">
               <span className={`text-sm font-bold leading-tight text-center ${isOut ? 'text-gray-500' : 'text-gray-200 group-hover:text-white'}`}>

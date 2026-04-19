@@ -51,7 +51,7 @@ export default function BillModal({ cart, total, onClose, onConfirm, loading }) 
                     </p>
                     <p className="text-gray-500 text-xs mt-0.5">₹{(item.selling_price * item.ratio).toFixed(0)} × {item.cartQuantity}</p>
                   </div>
-                  <span className="text-amber-500 font-black text-sm flex-shrink-0">₹{(item.cartQuantity * item.ratio * item.selling_price).toFixed(2)}</span>
+                  <span className="text-amber-500 font-black text-sm flex-shrink-0">₹{Math.ceil(item.cartQuantity * item.ratio * item.selling_price)}</span>
                 </div>
               ))}
             </div>
@@ -59,7 +59,7 @@ export default function BillModal({ cart, total, onClose, onConfirm, loading }) 
             <div className="border-t border-dashed border-white/10 pt-4 flex justify-between items-end">
               <div>
                 <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Payable Amount</p>
-                <p className="text-white font-black text-3xl tracking-tighter mt-1">₹{total.toFixed(2)}</p>
+                <p className="text-white font-black text-3xl tracking-tighter mt-1">₹{Math.ceil(total)}</p>
               </div>
               <div className="flex items-center gap-2 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
                 <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
@@ -90,7 +90,7 @@ export default function BillModal({ cart, total, onClose, onConfirm, loading }) 
         </div>
 
         <div className="bg-amber-500/5 p-3 border-t border-white/5 text-center">
-          <p className="text-[10px] text-amber-500/60 font-bold uppercase tracking-[0.2em]">Thank you for choosing Bar POS</p>
+          <p className="text-[10px] text-amber-500/60 font-bold uppercase tracking-[0.2em]">Thank you for choosing Mehfil</p>
         </div>
       </motion.div>
     </div>
